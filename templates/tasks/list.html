@@ -1,3 +1,48 @@
-{% for task in tasks %}
-    {{task}}
-{% endfor %}
+<!-- EXTENDS BASE -->
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div>
+    <div class="container py-4">
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">List tasks</h1>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Due date</th>
+                            <th>Completed</th>
+                            <th class="text-center">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td>{{task.pk}}</td>
+                            <td>{{task.title}}</td>
+                            <td>{{task.description}}</td>
+                            <td>{{task.due_date}}</td>
+                            <td>{{task.completed}}</td>
+                            <td class="text-center">
+                                <a href="{% url 'tasks:update-task' task.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'tasks:delete-task' task.pk %}" class="btn btn-sm btn-outline-primary">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No data</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mt-5">
+                    <a href="{% url 'tasks:create-task' %}" class="btn btn-primary btn-lg">Add task</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
