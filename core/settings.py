@@ -41,6 +41,7 @@ DJANGO_APPS = [
 
 LOCAL_APPS = [
     'apps.user',
+    'apps.tasks',
     'apps.shared'
 ]
 
