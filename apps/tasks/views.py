@@ -1,27 +1,34 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.urls import reverse_lazy
 from django.views.generic import (
     ListView,
     CreateView,
     UpdateView,
     DeleteView,
-    DetailView
 )
-from django.urls import reverse_lazy
-
 from .models import Task
 from .forms import TaskForm
 
 
 
-class ListTaskListView(ListView):
+class ListTaskListView(LoginRequiredMixin, ListView):
     """
     Class that allow to list tasks
     """
-    queryset = Task.objects.all()
+    model = Task
     template_name = 'tasks/list.html'
     context_object_name = 'tasks'
 
+    def get_queryset(self):
+        """
+        Get new queryset filtering by user
+        """
+        task_by_user = self.model.objects.filter(user=self.request.user)
+        return task_by_user
 
-class CreateTaskCreateView(CreateView):
+
+class CreateTaskCreateView(LoginRequiredMixin, CreateView):
     """
     Class that allow to create a new task
     """
@@ -36,7 +43,7 @@ class CreateTaskCreateView(CreateView):
         return super().form_valid(form)
 
 
-class UpdateTaskUpdateView(UpdateView):
+class UpdateTaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Class that allow to update a task
     """
@@ -46,8 +53,14 @@ class UpdateTaskUpdateView(UpdateView):
     context_object_name = 'task'
     success_url = reverse_lazy('tasks:tasks-list')
 
+    def test_func(self):
+        """
+        Check that only the owner user can update
+        """
+        return self.get_object().user == self.request.user
 
-class DeleteTaskDeleteView(DeleteView):
+
+class DeleteTaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     Class that allow to delete a task
     """
@@ -60,4 +73,10 @@ class DeleteTaskDeleteView(DeleteView):
         Override get method for delete task without confirmation and template
         """
         return self.delete(*args, **kwargs)
+    
+    def test_func(self):
+        """
+        Check that only the owner user can delete
+        """
+        return self.get_object().user == self.request.user
 
