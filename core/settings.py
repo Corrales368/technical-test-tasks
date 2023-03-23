@@ -42,7 +42,8 @@ DJANGO_APPS = [
 LOCAL_APPS = [
     'apps.user',
     'apps.tasks',
-    'apps.shared'
+    'apps.shared',
+    'apps.authentication',
 ]
 
 THIRD_APPS = [
@@ -134,5 +135,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 AUTH_USER_MODEL = 'user.User'
+
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
